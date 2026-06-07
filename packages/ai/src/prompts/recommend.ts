@@ -6,7 +6,7 @@ import type {
   MobilityAssessment,
   RecoveryScore,
 } from "@amis-dt/shared";
-import type { RecommendInput } from "../src/recommend";
+import type { RecommendInput } from "../recommend";
 
 export function buildRecommendPrompt(input: RecommendInput): string {
   const { patient, recentPain, recentMobility, recentScores, knownConditions } = input;
@@ -22,7 +22,7 @@ RECENT PAIN (most recent first, up to 10)
 ${recentPain
     .map(
       (p: PainEvent) =>
-        `- ${p.recorded_at} | region=${p.body_region} | type=${p.pain_type} | intensity=${p.intensity}/10 | side=${p.side ?? "n/a"}${p.trigger ? ` | trigger=${p.trigger}` : ""}`,
+        `- ${p.recorded_at} | region=${p.body_region} | type=${p.pain_type} | intensity=${p.intensity}/10${p.trigger ? ` | trigger=${p.trigger}` : ""}`,
     )
     .join("\n")}
 

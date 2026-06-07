@@ -14,7 +14,7 @@ import type {
   MobilityAssessment,
   RecoveryScore,
 } from "@amis-dt/shared";
-import { buildRecommendPrompt } from "../prompts/recommend";
+import { buildRecommendPrompt } from "./prompts/recommend";
 
 export const MODEL_VERSION = "amis-dt-recommend-1.0.0";
 
@@ -52,7 +52,8 @@ const LLMResponseSchema = z.object({
 
 function uuid(): string {
   // Avoid a hard dep on node:crypto for browser-safe usage.
-  return globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
+  const c = (globalThis as { crypto?: { randomUUID?: () => string } }).crypto;
+  return c?.randomUUID?.() ?? Math.random().toString(36).slice(2);
 }
 
 export async function recommendInterventions(

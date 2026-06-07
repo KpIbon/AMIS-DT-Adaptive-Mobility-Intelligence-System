@@ -26,7 +26,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import Slider from "@react-native-community/slider";
-import type { BodyRegion, BodyView, PainEvent, PainType } from "@amis-dt/shared";
+import type { BodyRegion, PainEvent, PainType } from "@amis-dt/shared";
 import { supabase } from "../src/lib/supabase";
 import { BodySilhouette } from "../src/components/BodySilhouette";
 
@@ -70,12 +70,6 @@ const HUMAN_REGION: Record<BodyRegion, string> = {
   foot_right: "Right foot",
 };
 
-function sideOf(region: BodyRegion): "left" | "right" | "center" {
-  if (region.endsWith("_left")) return "left";
-  if (region.endsWith("_right")) return "right";
-  return "center";
-}
-
 function isInjuredType(t: PainType): string {
   return t;
 }
@@ -85,7 +79,7 @@ export default function PainLogScreen() {
   const router = useRouter();
 
   // ------- form state -------
-  const [view, setView] = useState<BodyView>("front");
+  const [view, setView] = useState<"front" | "back">("front");
   const [region, setRegion] = useState<BodyRegion | null>(null);
   const [painType, setPainType] = useState<PainType | null>(null);
   const [intensity, setIntensity] = useState<number>(5);
@@ -94,7 +88,7 @@ export default function PainLogScreen() {
 
   // Switching view clears the selected region so users don't carry
   // a front selection into a back-only context.
-  const onToggleView = useCallback((next: BodyView) => {
+  const onToggleView = useCallback((next: "front" | "back") => {
     setView(next);
     setRegion(null);
   }, []);
@@ -143,11 +137,13 @@ export default function PainLogScreen() {
       return;
     }
 
+    // Narrow the type: every code path above either returns or
+    // assigns patientId. TS can't see across the try/catch, so we
+    // assert here.
+    const pid = patientId as string;
     const row: Omit<PainEvent, "id" | "created_at"> = {
-      patient_id: patientId,
+      patient_id: pid,
       body_region: region,
-      body_view: view,
-      side: sideOf(region),
       pain_type: painType,
       intensity: Math.round(intensity),
       trigger: trigger.trim() || null,

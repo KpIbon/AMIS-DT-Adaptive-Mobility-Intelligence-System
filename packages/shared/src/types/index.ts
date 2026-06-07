@@ -33,40 +33,10 @@ export interface PatientProfile {
 }
 
 // Pain types from migration 0002. Keep in sync with the DB enum.
-export const PAIN_TYPES = [
-  "sharp",
-  "dull",
-  "nerve",
-  "spasm",
-  "burning",
-  "throbbing",
-  "stiffness",
-  "other",
-] as const;
-export type PainType = (typeof PAIN_TYPES)[number];
-
-// Body regions rendered on the silhouette. Mirrors the SVG paths
-// inside apps/mobile/screens/PainLogScreen.tsx.
-export const BODY_REGIONS = [
-  "cervical",
-  "shoulder_left",
-  "shoulder_right",
-  "elbow_left",
-  "elbow_right",
-  "wrist_left",
-  "wrist_right",
-  "thoracic",
-  "lumbar",
-  "hip_left",
-  "hip_right",
-  "knee_left",
-  "knee_right",
-  "ankle_left",
-  "ankle_right",
-  "foot_left",
-  "foot_right",
-] as const;
-export type BodyRegion = (typeof BODY_REGIONS)[number];
+// The runtime list lives in ../constants (PAIN_TYPES) — here we
+// re-export the type only to keep the types surface pure.
+import type { PainType, BodyRegion } from "../constants";
+export type { PainType, BodyRegion };
 
 // Mirror of public.pain_events (after migration 0002).
 export interface PainEvent {
@@ -77,7 +47,6 @@ export interface PainEvent {
   intensity: number; // 1-10
   pain_type: PainType;
   trigger: string | null;
-  side: "front" | "back";
 }
 
 // Backwards-compat alias used by the web /api/recommend route

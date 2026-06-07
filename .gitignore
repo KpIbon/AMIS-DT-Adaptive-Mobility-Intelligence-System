@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+.next/
+.turbo/
+dist/
+build/
+out/
+
+# Expo / React Native
+.expo/
+.expo-shared/
+*.tsbuildinfo
+ios/
+android/
+*.apk
+*.aab
+*.ipa
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Misc
+.DS_Store
+*.pem
+.vscode/
+.idea/
+*.log
+npm-debug.log*

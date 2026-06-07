@@ -1,0 +1,20 @@
+{
+  "name": "@amis-dt/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "seed": "tsx seed/index.ts",
+    "clean": "rm -rf .turbo"
+  },
+  "dependencies": {
+    "@amis-dt/shared": "workspace:*",
+    "@supabase/supabase-js": "^2.47.10"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

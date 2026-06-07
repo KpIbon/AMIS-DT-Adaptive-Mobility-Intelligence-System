@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "AMIS-DT",
+    "slug": "amis-dt",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "amisdt",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.amisdt.app"
+    },
+    "android": {
+      "package": "com.amisdt.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0a0a0b"
+      }
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": false
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      }
+    }
+  }
+}

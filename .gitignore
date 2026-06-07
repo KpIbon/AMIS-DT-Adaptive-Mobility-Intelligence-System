@@ -32,3 +32,4 @@ android/
 .idea/
 *.log
 npm-debug.log*
+commit-msg.txt

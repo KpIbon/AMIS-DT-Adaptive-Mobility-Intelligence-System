@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getSupabaseServerClient } from "../../../lib/supabase/server";
 import { recommendInterventions } from "@amis-dt/ai";
-import type { PainMapEntry, MobilityAssessment, RecoveryScore, PatientProfile } from "@amis-dt/shared";
+import type { PainEvent, MobilityAssessment, RecoveryScore, PatientProfile } from "@amis-dt/shared";
 
 const Body = z.object({ patientId: z.string().uuid() });
 
@@ -32,12 +32,12 @@ export async function POST(req: NextRequest) {
       .eq("id", body.patientId)
       .single<PatientProfile>(),
     supabase
-      .from("pain_map")
+      .from("pain_events")
       .select("*")
       .eq("patient_id", body.patientId)
       .order("recorded_at", { ascending: false })
       .limit(10)
-      .returns<PainMapEntry[]>(),
+      .returns<PainEvent[]>(),
     supabase
       .from("mobility_assessments")
       .select("*")

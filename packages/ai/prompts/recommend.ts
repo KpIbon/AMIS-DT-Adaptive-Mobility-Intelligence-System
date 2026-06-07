@@ -2,7 +2,7 @@
 
 import type {
   PatientProfile,
-  PainMapEntry,
+  PainEvent,
   MobilityAssessment,
   RecoveryScore,
 } from "@amis-dt/shared";
@@ -21,8 +21,8 @@ PATIENT
 RECENT PAIN (most recent first, up to 10)
 ${recentPain
     .map(
-      (p: PainMapEntry) =>
-        `- ${p.recorded_at} | region=${p.body_region} | intensity=${p.intensity}/10 | quality=${p.quality ?? "n/a"}`,
+      (p: PainEvent) =>
+        `- ${p.recorded_at} | region=${p.body_region} | type=${p.pain_type} | intensity=${p.intensity}/10 | side=${p.side ?? "n/a"}${p.trigger ? ` | trigger=${p.trigger}` : ""}`,
     )
     .join("\n")}
 

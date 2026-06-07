@@ -25,7 +25,7 @@ export default function HomeScreen() {
       </Text>
 
       <View style={{ marginTop: 12, gap: 12 }}>
-        <Link href="/pain-map" asChild>
+        <Link href="/log-pain" asChild>
           <Pressable
             style={{
               backgroundColor: "#22d3ee",
@@ -35,7 +35,7 @@ export default function HomeScreen() {
             }}
           >
             <Text style={{ color: "#0a0a0b", fontWeight: "600" }}>
-              Log a pain entry
+              Log a pain event
             </Text>
           </Pressable>
         </Link>

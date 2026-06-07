@@ -10,7 +10,7 @@ import OpenAI from "openai";
 import { z } from "zod";
 import type {
   PatientProfile,
-  PainMapEntry,
+  PainEvent,
   MobilityAssessment,
   RecoveryScore,
 } from "@amis-dt/shared";
@@ -20,7 +20,7 @@ export const MODEL_VERSION = "amis-dt-recommend-1.0.0";
 
 export interface RecommendInput {
   patient: PatientProfile;
-  recentPain: PainMapEntry[];
+  recentPain: PainEvent[];
   recentMobility: MobilityAssessment[];
   recentScores: RecoveryScore[];
   knownConditions?: string[];
@@ -109,15 +109,20 @@ function heuristicRecommend(
 ): { recommendations: Recommendation[]; model_version: string } {
   // Deterministic fallback used when no API key is set or the LLM call fails.
   // Picks from a small intervention library based on the patient's
-  // most-affected region and pain trend.
+  // most-affected region, pain type, and intensity trend.
   const now = new Date().toISOString();
-  const topRegion = input.recentPain[0]?.body_region ?? "unspecified";
-  const topPain = input.recentPain[0]?.intensity ?? 5;
+  const top = input.recentPain[0];
+  const topRegion = top?.body_region ?? "unspecified";
+  const topIntensity = top?.intensity ?? 5;
+  const topType = top?.pain_type ?? "unspecified";
+  const recentTrigger = top?.trigger?.trim();
 
   const interventions = [
     {
       category: `targeted_physical_therapy_${topRegion}`,
-      rationale: `Recent pain concentrated in ${topRegion} (intensity ${topPain}/10). A targeted PT block is the highest-yield first step.`,
+      rationale: `Recent pain concentrated in ${topRegion} (${topType}, intensity ${topIntensity}/10${
+        recentTrigger ? `, trigger: ${recentTrigger}` : ""
+      }). A targeted PT block is the highest-yield first step.`,
       uplift: 6,
       confidence: 0.55,
     },
@@ -129,7 +134,7 @@ function heuristicRecommend(
     },
     {
       category: "pain_management_consultation",
-      rationale: `Pain intensity trend warrants a clinician review of pharmacologic and non-pharmacologic options.`,
+      rationale: `Pain type (${topType}) and intensity trend warrant a clinician review of pharmacologic and non-pharmacologic options.`,
       uplift: 3,
       confidence: 0.5,
     },

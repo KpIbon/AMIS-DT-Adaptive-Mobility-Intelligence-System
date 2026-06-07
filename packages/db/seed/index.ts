@@ -63,12 +63,15 @@ async function main() {
       .single();
 
     if (profile) {
-      // Sample pain map entry
-      await supabase.from("pain_map").insert({
+      // Sample pain event
+      await supabase.from("pain_events").insert({
         patient_id: profile.id,
         body_region: "knee_left",
+        body_view: "front",
+        side: "left",
+        pain_type: "dull",
         intensity: 4,
-        notes: "Mild ache after long walks",
+        trigger: "Mild ache after long walks",
       });
 
       // Sample mobility assessment

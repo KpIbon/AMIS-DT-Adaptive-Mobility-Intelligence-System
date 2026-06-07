@@ -4,7 +4,7 @@
 // Shared domain types used by web, mobile, AI
 // engine, and DB layer. Mirrors the Supabase
 // schema in
-// packages/db/supabase/migrations/0001_init.sql
+// packages/db/supabase/migrations/*.sql
 // ============================================
 
 export type UserRole = "patient" | "clinician" | "admin";
@@ -32,23 +32,58 @@ export interface PatientProfile {
   updated_at: string;
 }
 
-export type PainQuality =
-  | "sharp"
-  | "dull"
-  | "burning"
-  | "aching"
-  | "throbbing"
-  | "stiffness";
+// Pain types from migration 0002. Keep in sync with the DB enum.
+export const PAIN_TYPES = [
+  "sharp",
+  "dull",
+  "nerve",
+  "spasm",
+  "burning",
+  "throbbing",
+  "stiffness",
+  "other",
+] as const;
+export type PainType = (typeof PAIN_TYPES)[number];
 
-export interface PainMapEntry {
+// Body regions rendered on the silhouette. Mirrors the SVG paths
+// inside apps/mobile/screens/PainLogScreen.tsx.
+export const BODY_REGIONS = [
+  "cervical",
+  "shoulder_left",
+  "shoulder_right",
+  "elbow_left",
+  "elbow_right",
+  "wrist_left",
+  "wrist_right",
+  "thoracic",
+  "lumbar",
+  "hip_left",
+  "hip_right",
+  "knee_left",
+  "knee_right",
+  "ankle_left",
+  "ankle_right",
+  "foot_left",
+  "foot_right",
+] as const;
+export type BodyRegion = (typeof BODY_REGIONS)[number];
+
+// Mirror of public.pain_events (after migration 0002).
+export interface PainEvent {
   id: string;
   patient_id: string;
   recorded_at: string;
-  body_region: string;
-  intensity: number; // 0-10
-  quality: PainQuality | null;
-  notes: string | null;
+  body_region: BodyRegion;
+  intensity: number; // 1-10
+  pain_type: PainType;
+  trigger: string | null;
+  side: "front" | "back";
 }
+
+// Backwards-compat alias used by the web /api/recommend route
+// and the AI engine. Older code that imported PainMapEntry still
+// resolves to the renamed table.
+export type PainMapEntry = PainEvent;
 
 export type JointName =
   | "shoulder_left"
@@ -72,8 +107,8 @@ export interface MobilityAssessment {
   recorded_at: string;
   joint: JointName | string;
   rom_degrees: number;
-  strength_score: number; // 0-100
-  balance_score: number; // 0-100
+  strength_score: number;
+  balance_score: number;
   notes: string | null;
 }
 
@@ -81,9 +116,9 @@ export interface RecoveryScore {
   id: string;
   patient_id: string;
   recorded_at: string;
-  composite_score: number; // 0-100
+  composite_score: number;
   mobility_score: number;
-  pain_score: number; // 0-10
+  pain_score: number;
   strength_score: number;
   adherence_score: number;
   model_version: string | null;
@@ -119,7 +154,7 @@ export interface AIRecommendation {
   intervention_category: string;
   rationale: string;
   predicted_recovery_uplift: number;
-  confidence: number; // 0-1
+  confidence: number;
   model_version: string;
   clinician_acknowledged_at: string | null;
   clinician_decision: "accepted" | "rejected" | "modified" | null;
